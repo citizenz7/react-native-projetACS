@@ -19,7 +19,7 @@ class ProduitsItem extends React.Component {
                 <Text style={styles.description_text} numberOfLines={6}>{produit.overview}</Text>
               </View>
               <View style={styles.date_container}>
-                <Text style={styles.date_text}>Mis en ligne le {produit.creation_date}</Text>
+        <Text style={styles.date_text}>Mis en ligne le {produit.creation_date}, par {produit.vendeur}</Text>
               </View>
             </View>
           </View>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   date_text: {
     textAlign: 'right',
-    fontSize: 14
+    fontSize: 13
   }
 })
 

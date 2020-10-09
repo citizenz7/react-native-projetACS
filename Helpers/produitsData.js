@@ -5,7 +5,8 @@ const data = [
       title:"Basket en toile rouge Converse",
       image_path:"",
       overview:"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed aspernatur ipsa blanditiis doloribus ad eveniet voluptates hic odio suscipit repellendus numquam nam quis, illum soluta vitae. Perspiciatis sint repellat quaerat!",
-      creation_date:"2020-10-09"
+      creation_date:"2020-10-09",
+      vendeur:"Dudule58"
    },
    {
       id:2,
@@ -13,7 +14,8 @@ const data = [
       title:"Trotinette électrique Xiaomi",
       image_path:"",
       overview:"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed aspernatur ipsa blanditiis doloribus ad eveniet voluptates hic odio suscipit repellendus numquam nam quis, illum soluta vitae. Perspiciatis sint repellat quaerat!",
-      creation_date:"2020-10-09"
+      creation_date:"2020-10-09",
+      vendeur:"olivierben5"
    },
    {
        id:3,
@@ -21,7 +23,8 @@ const data = [
        title:"Pull over bleu colle en V",
        image_path:"",
        overview:"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed aspernatur ipsa blanditiis doloribus ad eveniet voluptates hic odio suscipit repellendus numquam nam quis, illum soluta vitae. Perspiciatis sint repellat quaerat!",
-       creation_date:"2020-10-09"
+       creation_date:"2020-10-09",
+       vendeur:"SeptouGa2"
     },
     {
        id:4,
@@ -29,7 +32,8 @@ const data = [
        title:"Smartphone Samsung S6 4 GB",
        image_path:"",
        overview:"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed aspernatur ipsa blanditiis doloribus ad eveniet voluptates hic odio suscipit repellendus numquam nam quis, illum soluta vitae. Perspiciatis sint repellat quaerat!",
-       creation_date:"2020-10-09"
+       creation_date:"2020-10-09",
+       vendeur:"GeraldO"
     },
 ]
 
