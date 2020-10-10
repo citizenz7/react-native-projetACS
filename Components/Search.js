@@ -23,7 +23,7 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
     main_container: {
-        flex:2,
+        flex: 1,
         marginTop: 10
       },
     textinput: {

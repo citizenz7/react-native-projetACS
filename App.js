@@ -5,27 +5,45 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import Search from './Components/Search'
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation, route }) {
+  React.useEffect(() => {
+    if (route.params?.post) {
+      // Post updated, do something with `route.params.post`
+      // For example, send the post to the server
+    }
+  }, [route.params?.post]);
+
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
       <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
+        title="Create post"
+        onPress={() => navigation.navigate('CreatePost')}
       />
+      <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
     </View>
   );
 }
 
-function DetailsScreen({ navigation }) {
+function CreatePostScreen({ navigation, route }) {
+  const [postText, setPostText] = React.useState('');
+
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Button
-        title="Go to Details... again"
-        onPress={() => navigation.navigate('Details')}
+    <>
+      <TextInput
+        multiline
+        placeholder="What's on your mind?"
+        style={{ height: 200, padding: 10, backgroundColor: 'white' }}
+        value={postText}
+        onChangeText={setPostText}
       />
-    </View>
+      <Button
+        title="Done"
+        onPress={() => {
+          // Pass params back to home screen
+          navigation.navigate('Home', { post: postText });
+        }}
+      />
+    </>
   );
 }
 
@@ -35,9 +53,23 @@ export default class App extends React.Component {
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Navigator mode="modal">
+          <Stack.Screen 
+            name="Home" 
+            component={HomeScreen} 
+            options={{
+              title: 'LOCALEO, Bienvenue !',
+              headerStyle: {
+                backgroundColor: '#f4511e',
+              },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen 
+            name="CreatePost" 
+            component={CreatePostScreen} 
+            options={{ title: 'My home' }}
+          />
         </Stack.Navigator>
         <Search/>
       </NavigationContainer>
