@@ -8,19 +8,21 @@ class ProduitsItem extends React.Component {
           <View style={styles.main_container}>
             <Image
               style={styles.image}
-              source={{uri: "image"}}
+              source={{uri: produit.image_path}}
             />
             <View style={styles.content_container}>
               <View style={styles.header_container}>
                 <Text style={styles.title_text}>{produit.title}</Text>
                 <Text style={styles.vote_text}>{produit.vote_average}</Text>
               </View>
+              <View>
+                <Text style={styles.auteur_text}>par {produit.vendeur}</Text>
+              </View>
               <View style={styles.description_container}>
                 <Text style={styles.description_text} numberOfLines={6}>{produit.overview}</Text>
               </View>
               <View style={styles.date_container}>
-        <Text style={styles.date_text}>Mis en ligne le {produit.creation_date}, par {produit.vendeur}</Text>
-              </View>
+                <Text style={styles.date_text}>Mis en ligne le {produit.creation_date}</Text></View>
             </View>
           </View>
         )
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   },
   title_text: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 17,
     flex: 1,
     flexWrap: 'wrap',
     paddingRight: 5
@@ -56,7 +58,10 @@ const styles = StyleSheet.create({
   vote_text: {
     fontWeight: 'bold',
     fontSize: 22,
-    color: '#666666'
+    color: '#666666',
+    borderWidth: 1,
+    paddingRight: 5,
+    paddingLeft: 5,
   },
   description_container: {
     flex: 7
@@ -71,7 +76,11 @@ const styles = StyleSheet.create({
   date_text: {
     textAlign: 'right',
     fontSize: 13
-  }
+  },
+  auteur_text: {
+    textAlign: 'right',
+    fontSize: 16
+  },
 })
 
 export default ProduitsItem
