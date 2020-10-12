@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native'
 
+
 function ProduitsItem({ article }) {
+  if (article.title === 'Testupload') console.log(article.Images[0].data);
         return (
           <View style={styles.main_container}>
               { article.Images[0] &&  <Image
