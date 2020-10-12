@@ -1,33 +1,23 @@
-import React from 'react'
+import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native'
 
-class ProduitsItem extends React.Component {
-    render() {
-        const produit = this.props.produits
+function ProduitsItem({ article }) {
         return (
           <View style={styles.main_container}>
-            <Image
-              style={styles.image}
-              source={{uri: produit.image_path}}
-            />
-            <View style={styles.content_container}>
+              { article.Images[0] &&  <Image
+                style={styles.image}
+                source={{uri: `data:image/jpeg;base64,${article.Images[0].data}`}}
+              />}
               <View style={styles.header_container}>
-                <Text style={styles.title_text}>{produit.title}</Text>
-                <Text style={styles.vote_text}>{produit.vote_average}</Text>
+                <Text style={styles.title_text}>{article.title}</Text>
+                <Text style={styles.description_text} numberOfLines={6}>{article.description}</Text>
+                <Text style={styles.date_text}>Mis en ligne le {article.createdAt}</Text>
               </View>
-              <View>
-                <Text style={styles.auteur_text}>par {produit.vendeur}</Text>
-              </View>
-              <View style={styles.description_container}>
-                <Text style={styles.description_text} numberOfLines={6}>{produit.overview}</Text>
-              </View>
-              <View style={styles.date_container}>
-                <Text style={styles.date_text}>Mis en ligne le {produit.creation_date}</Text></View>
-            </View>
           </View>
         )
-    }
 }
+
+
 
 const styles = StyleSheet.create({
   main_container: {
@@ -45,15 +35,11 @@ const styles = StyleSheet.create({
     margin: 5
   },
   header_container: {
-    flex: 3,
-    flexDirection: 'row'
+
   },
   title_text: {
     fontWeight: 'bold',
     fontSize: 17,
-    flex: 1,
-    flexWrap: 'wrap',
-    paddingRight: 5
   },
   vote_text: {
     fontWeight: 'bold',
