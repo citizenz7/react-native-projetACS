@@ -7,6 +7,10 @@ import { StyleSheet, Text, Image, View, TextInput, Button } from 'react-native';
 import Search from './Components/Search'
 
 import * as ImagePicker from 'expo-image-picker';
+import * as Fs from 'expo-file-system';
+import * as ImageManipulator from "expo-image-manipulator";
+
+// import { Dimensions } from 'Dimensions';
 
 function HomeScreen({ navigation, route }) {login()
   let archaique = false;
@@ -28,9 +32,11 @@ function HomeScreen({ navigation, route }) {login()
   const [description, setDescription] = useState(null);
   const [price, setPrice] = useState(null);
 
-  const [image, setImage] = useState(null);
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
+  const [image3, setImage3] = useState(null);
 
-  const handleChoosePhoto = async () => {
+  const handleChoosePhoto = async (imgNo) => {
     console.log('Enter image library');
 
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -43,7 +49,9 @@ function HomeScreen({ navigation, route }) {login()
     console.log(result);
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      if (imgNo === 1) setImage1(result.uri);
+      else if (imgNo === 2) setImage2(result.uri);
+      else if (imgNo === 3) setImage3(result.uri);
     }
   }
 
@@ -72,14 +80,37 @@ function HomeScreen({ navigation, route }) {login()
           <TextInput style={styles.textinput}  placeholder="Title" onChangeText={ setTitle } />
           <TextInput style={styles.textinput}  placeholder="Description" onChangeText={ setDescription } />
           <TextInput style={styles.textinput}  placeholder="Price" onChangeText={ setPrice } />
-          {image && (
-            <Image
-                source={{ uri: image }}
-                style={{ width: 300, height: 300 }}
-              />
-            )}
-          <Button title="Choose Photo" onPress={handleChoosePhoto} />
-          <Button title="Post article" onPress={ () => { postArticle(title, description, price, image).then(res => console.log(res)).catch(e => console.log(e)); setImage(null) } } />
+          { image1 &&
+            <View style={ {height: 100, flexDirection: "row"} }>
+              {image1 &&
+                <Image
+                  source={{ uri: image1 }}
+                  style={{ width: "33%" }}
+              />}
+              {image2 &&
+                <Image
+                  source={{ uri: image2 }}
+                  style={{ width: "33%" }}
+              />}
+              {image3 &&
+                <Image
+                  source={{ uri: image3 }}
+                  style={{ width: "33%" }}
+              />}
+            </View>
+          }
+          <View style={ { margin: 5, flexDirection: "row", justifyContent: "space-around" } }>
+            <View style={ { width: "30%" } }>
+              <Button title="Choose Photo 1" onPress={ () => handleChoosePhoto(1)} />
+            </View>
+            <View style={ { width: "30%" } }>
+              <Button title="Choose Photo 2" onPress={ () => handleChoosePhoto(2)} />
+            </View>
+            <View style={ { width: "30%" } }>
+              <Button title="Choose Photo 3" onPress={ () => handleChoosePhoto(3)} />
+            </View>
+          </View>
+          <Button title="Post article" onPress={ () => { postArticle({ title: title, description: description, price: price }, [image1, image2, image3]).then(res => console.log(res)).catch(e => console.log(e)); setImage1(null); setImage2(null); setImage3(null); } } />
           </View>
         :
         <View>
@@ -121,42 +152,52 @@ function HomeScreen({ navigation, route }) {login()
   );
 }
 
-const postArticle = async (title, description, price, image) => {
-  const article = {
-    title: title,
-    description: description,
-    price: price
-  }
+const fetchApi = async (url, options) => {
+  let res = await fetch(url, options);
 
-  const options = {
-    method: 'post',
-    headers: { 'Content-Type': 'multipart/form-data', Accept: "application/json" },
-    body: createFormData(image, article)
-  }
-
-  const res = await fetch('https://localeo.herokuapp.com/API/newArticle', options);
-  const json = await res.json();
-
-  console.log(json);
-
-  return res;
+  let json = await res.text();
+  if (json.charAt(0) !== '<') json = JSON.parse(json);
+  return json;
 }
 
-const createFormData = (photo, body) => {
-  const data = new FormData();
-  console.log(photo);
+const postArticle = async (article, images) => {
+  const url = "https://localeo.herokuapp.com/API/";
 
-  data.append("image1", {
-    type: 'image/jpeg',
-    uri: photo
-  });
+  let dataImages = [];
+  for (let image of images)
+  {
+    if (image)
+    {
+      const info = await Fs.getInfoAsync(image, {size: true});
+      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 800}}), { compress: 1 });
+      const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
 
-  Object.keys(body).forEach(key => {
-    data.append(key, body[key]);
-  });
-console.log(data);
-  return data;
-};
+      let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
+      dataImages.push(data);
+    }
+  }
+
+  try {
+    const body = {
+      article: article,
+      images: dataImages
+    }
+
+
+    const options = {
+      method: 'post',
+      headers: { 'Content-Type': "application/json" },
+      body: JSON.stringify(body)
+    }
+
+    let json = await fetchApi(url + "newArticle", options);
+
+    return json;
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
 
 const login = async (username = null, password = null) => {
   const creds = {};
@@ -267,9 +308,9 @@ export default class App extends React.Component {
     return (
       <NavigationContainer>
         <Stack.Navigator mode="modal">
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
             options={{
               title: 'LOCALEO, Bienvenue !',
               headerStyle: {

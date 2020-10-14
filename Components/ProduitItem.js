@@ -2,11 +2,25 @@ import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native'
 
 function ProduitsItem({ article }) {
+        let img1 = false;
+        let img2 = false;
+        let img3 = false;
+        if (article.ImageTexts.length > 0) img1 = true;
+        if (article.ImageTexts.length > 1) img2 = true;
+        if (article.ImageTexts.length > 2) img3 = true;
         return (
           <View style={styles.main_container}>
-              { article.Images[0] &&  <Image
+              { img1 &&  <Image
                 style={styles.image}
-                source={{uri: `data:image/jpeg;base64,${article.Images[0].data}`}}
+                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[0].data}`}}
+              />}
+              { img2 &&  <Image
+                style={styles.image}
+                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[1].data}`}}
+              />}
+              { img3 &&  <Image
+                style={styles.image}
+                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[2].data}`}}
               />}
               <View style={styles.header_container}>
                 <Text style={styles.title_text}>{article.title}</Text>
@@ -21,12 +35,13 @@ function ProduitsItem({ article }) {
 
 const styles = StyleSheet.create({
   main_container: {
-    height: 190,
+    height: 400,
+    padding: 10,
     flexDirection: 'row'
   },
   image: {
-    width: 120,
-    height: 180,
+    width: 400,
+    height: 400,
     margin: 5,
     backgroundColor: 'gray'
   },
