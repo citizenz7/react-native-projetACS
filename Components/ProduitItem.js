@@ -35,13 +35,13 @@ function ProduitsItem({ article }) {
 
 const styles = StyleSheet.create({
   main_container: {
-    height: 400,
+    height: 160,
     padding: 10,
     flexDirection: 'row'
   },
   image: {
-    width: 400,
-    height: 400,
+    width: 150,
+    height: 150,
     margin: 5,
     backgroundColor: 'gray'
   },

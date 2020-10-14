@@ -171,7 +171,7 @@ const postArticle = async (article, images) => {
     if (image)
     {
       const info = await Fs.getInfoAsync(image, {size: true});
-      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 800}}), { compress: 1 });
+      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 500}}), { compress: 1 });
       const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
 
       let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
@@ -192,7 +192,7 @@ const postArticle = async (article, images) => {
       body: JSON.stringify(body)
     }
 
-    let json = await fetchApi(url + "newArticle", options);
+    let json = await fetchApi(url + "article/create", options);
 
     return json;
   }
@@ -234,7 +234,7 @@ const login = async (username = null, password = null) => {
 }
 
 const register = async (username, email, password, confirmPassword) => {
-  const creds = {
+  const user = {
     username: username,
     email: email,
     password: password,
@@ -244,11 +244,10 @@ const register = async (username, email, password, confirmPassword) => {
   const options = {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(creds)
+    body: JSON.stringify({ userInputs: user })
   }
 
-  const res = await fetch('http://localeo.herokuapp.com/API/user/register', options);
-  const json = await res.json();
+  const json = await fetchApi('http://localeo.herokuapp.com/API/user/register', options);
 
   if (json.error)
   {
