@@ -5,22 +5,22 @@ function ProduitsItem({ article }) {
         let img1 = false;
         let img2 = false;
         let img3 = false;
-        if (article.ImageTexts.length > 0) img1 = true;
-        if (article.ImageTexts.length > 1) img2 = true;
-        if (article.ImageTexts.length > 2) img3 = true;
+        if (article.Images.length > 0) img1 = true;
+        if (article.Images.length > 1) img2 = true;
+        if (article.Images.length > 2) img3 = true;
         return (
           <View style={styles.main_container}>
               { img1 &&  <Image
                 style={styles.image}
-                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[0].data}`}}
+                source={{uri: `data:image/jpeg;base64,${article.Images[0].data}`}}
               />}
               { img2 &&  <Image
                 style={styles.image}
-                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[1].data}`}}
+                source={{uri: `data:image/jpeg;base64,${article.Images[1].data}`}}
               />}
               { img3 &&  <Image
                 style={styles.image}
-                source={{uri: `data:image/jpeg;base64,${article.ImageTexts[2].data}`}}
+                source={{uri: `data:image/jpeg;base64,${article.Images[2].data}`}}
               />}
               <View style={styles.header_container}>
                 <Text style={styles.title_text}>{article.title}</Text>

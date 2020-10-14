@@ -12,8 +12,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 
 // import { Dimensions } from 'Dimensions';
 
-function HomeScreen({ navigation, route }) {login()
-  let archaique = false;
+function HomeScreen({ navigation, route }) {
   useEffect(() => {
     if (route.params?.post) {
       // Post updated, do something with `route.params.post`
@@ -21,7 +20,7 @@ function HomeScreen({ navigation, route }) {login()
     }
   }, [route.params?.post]);
 
-  const [session, setSession] = useState(true);
+  const [session, setSession] = useState(false);
 
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
@@ -54,8 +53,6 @@ function HomeScreen({ navigation, route }) {login()
       else if (imgNo === 3) setImage3(result.uri);
     }
   }
-
-  if (archaique === true) logout().then(res => { archaique = false; setSession(false) } ).catch(e => console.log(e));
 
   return (
     <View style={{ flex: 2, alignItems: 'center', justifyContent: 'center' }}>
@@ -157,6 +154,11 @@ const fetchApi = async (url, options) => {
 
   let json = await res.text();
   if (json.charAt(0) !== '<') json = JSON.parse(json);
+  else
+  {
+    console.log(json);
+    return {};
+  }
   return json;
 }
 
@@ -219,8 +221,7 @@ const login = async (username = null, password = null) => {
     body: JSON.stringify(creds)
   }
 
-  const res = await fetch('http://localeo.herokuapp.com/API/login', options);
-  const json = await res.json();
+  const json = await fetchApi('http://localeo.herokuapp.com/API/user/login', options);
 
   if (json.error)
   {
@@ -246,7 +247,7 @@ const register = async (username, email, password, confirmPassword) => {
     body: JSON.stringify(creds)
   }
 
-  const res = await fetch('http://localeo.herokuapp.com/API/register', options);
+  const res = await fetch('http://localeo.herokuapp.com/API/user/register', options);
   const json = await res.json();
 
   if (json.error)
@@ -265,8 +266,7 @@ const logout = async () => {
     headers: { 'Content-Type': 'application/json' }
   }
 
-  const res = await fetch('http://localeo.herokuapp.com/API/logout', options);
-  const json = await res.json();
+  const json = await fetchApi('http://localeo.herokuapp.com/API/user/logout', options);
 
   if (json.error)
   {

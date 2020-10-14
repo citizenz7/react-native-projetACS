@@ -56,7 +56,14 @@ const getAllArticle = async (words) =>
   else words = '?words=' + words;
   const res = await fetch('http://localeo.herokuapp.com/API/search' + words);
 
-  const json = await res.json();
+  let json = await res.text();
+
+  if (json.charAt(0) !== '<') json = JSON.parse(json);
+  else
+  {
+    console.log(json);
+    return [];
+  }
 
   return json;
 }
