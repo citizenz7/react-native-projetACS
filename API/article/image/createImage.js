@@ -1,12 +1,12 @@
 import fetchApi from '../../fetchApi';
 
-export default function createMessage(image)
+export default function createImage(image)
 {
   const options = {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: message })
+    body: JSON.stringify({ image: image })
   }
 
-  return fetchApi('message/create', options);
+  return fetchApi('article/image/create', options);
 }

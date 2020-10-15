@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Fs from 'expo-file-system';
 import * as ImageManipulator from "expo-image-manipulator";
 
-import Api from './API/api';
+import Api from './API/api';console.log(Api);
 
 async function test()
 {

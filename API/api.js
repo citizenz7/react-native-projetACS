@@ -18,6 +18,11 @@ import deleteArticle from './article/deleteArticle';
 import readArticle, { getArticle, getArticleOf, searchArticle } from './article/readArticle';
 import updateArticle from './article/updateArticle';
 
+import createImage from './article/image/createImage';
+import deleteImage from './article/image/deleteImage';
+import readImage, { getImage, getBase64 } from './article/image/readImage';
+import updateImage from './article/image/updateImage';
+
 const Api = {
   login: login,
   register: register,
@@ -39,13 +44,20 @@ const Api = {
   getChatRoom: getChatRoom,
   getRoomMessages: getRoomMessages,
 
-  createMessage: createMessage,
-  deleteMessage: deleteMessage,
-  readMessage: readMessage,
-  updateMessage: updateMessage,
+  createArticle: createArticle,
+  deleteArticle: deleteArticle,
+  readArticle: readArticle,
+  updateArticle: updateArticle,
   getArticle: getArticle,
   getArticleOf: getArticleOf,
   searchArticle: searchArticle,
+
+  createImage: createImage,
+  deleteImage: deleteImage,
+  readImage: readImage,
+  updateImage: updateImage,
+  getImage: getImage,
+  getBase64: getBase64
 }
 
 export default Api;
