@@ -13,6 +13,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 // import { Dimensions } from 'Dimensions';
 
 function HomeScreen({ navigation, route }) {
+  const url = "https://localeo.herokuapp.com/API/";
   useEffect(() => {
     if (route.params?.post) {
       // Post updated, do something with `route.params.post`
@@ -31,9 +32,14 @@ function HomeScreen({ navigation, route }) {
   const [description, setDescription] = useState(null);
   const [price, setPrice] = useState(null);
 
+  const [isPostArticle, setIsPostArticle] = useState(false);
+  const [isArticlePosted, setIsArticlePosted] = useState(false);
+
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
   const [image3, setImage3] = useState(null);
+
+  if (!image1 && !image2 && !image3 && isArticlePosted) setIsArticlePosted(false);
 
   const handleChoosePhoto = async (imgNo) => {
     console.log('Enter image library');
@@ -51,6 +57,73 @@ function HomeScreen({ navigation, route }) {
       if (imgNo === 1) setImage1(result.uri);
       else if (imgNo === 2) setImage2(result.uri);
       else if (imgNo === 3) setImage3(result.uri);
+    }
+  }
+
+  async function handlePostArticle()
+  {
+    try {
+      setIsPostArticle(true);
+
+      const newArticle = { title: title, description: description, price: price };
+
+      const res = await createArticle(newArticle);
+
+      if (res.error)
+      {
+        console.log(res.error);
+        return
+      }
+
+      if (!res.article)
+      {
+        console.log("No article in return");
+        return;
+      }
+
+      if (!res.article.id)
+      {
+        console.log("No article id!");
+        return;
+      }
+
+      setIsPostArticle(false);
+      setIsArticlePosted(true);
+
+      let images = [image1, image2, image3];
+
+      let i = 1;
+      for (let image of images)
+      {
+        if (image)
+        {
+          let index = i;
+          uploadImage(image, res.article.id)
+          .then((res) => {
+            if (res.error)
+            {
+              console.log(res.error);
+              return
+            }
+
+            console.log(res);
+            console.log(i);
+            if (res.success)
+            {
+              if (index === 1) setImage1(null);
+              else if (index === 2) setImage2(null);
+              else if (index === 3) setImage3(null);
+
+              console.log("Image uploaded succesfull!");
+              return;
+            }
+          })
+          .catch(e => console.log(e))
+        }
+        i++;
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -74,9 +147,11 @@ function HomeScreen({ navigation, route }) {
             .catch(e => console.log(e));
           }
           } />
+          { isPostArticle && <Text>Posting article</Text> }
           <TextInput style={styles.textinput}  placeholder="Title" onChangeText={ setTitle } />
           <TextInput style={styles.textinput}  placeholder="Description" onChangeText={ setDescription } />
           <TextInput style={styles.textinput}  placeholder="Price" onChangeText={ setPrice } />
+          { isArticlePosted && <Text>Uploading images...</Text> }
           { image1 &&
             <View style={ {height: 100, flexDirection: "row"} }>
               {image1 &&
@@ -107,7 +182,7 @@ function HomeScreen({ navigation, route }) {
               <Button title="Choose Photo 3" onPress={ () => handleChoosePhoto(3)} />
             </View>
           </View>
-          <Button title="Post article" onPress={ () => { postArticle({ title: title, description: description, price: price }, [image1, image2, image3]).then(res => console.log(res)).catch(e => console.log(e)); setImage1(null); setImage2(null); setImage3(null); } } />
+          <Button title="Post article" onPress={ handlePostArticle } />
           </View>
         :
         <View>
@@ -149,47 +224,15 @@ function HomeScreen({ navigation, route }) {
   );
 }
 
-const fetchApi = async (url, options) => {
-  let res = await fetch(url, options);
+const url = "https://localeo.herokuapp.com/API/";
 
-  let json = await res.text();
-  if (json.charAt(0) !== '<') json = JSON.parse(json);
-  else
-  {
-    console.log(json);
-    return {};
-  }
-  return json;
-}
-
-const postArticle = async (article, images) => {
-  const url = "https://localeo.herokuapp.com/API/";
-
-  let dataImages = [];
-  for (let image of images)
-  {
-    if (image)
-    {
-      const info = await Fs.getInfoAsync(image, {size: true});
-      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 500}}), { compress: 1 });
-      const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
-
-      let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
-      dataImages.push(data);
-    }
-  }
-
+async function createArticle(article)
+{
   try {
-    const body = {
-      article: article,
-      images: dataImages
-    }
-
-
     const options = {
       method: 'post',
       headers: { 'Content-Type': "application/json" },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ article: article })
     }
 
     let json = await fetchApi(url + "article/create", options);
@@ -199,6 +242,45 @@ const postArticle = async (article, images) => {
   catch (e) {
     console.log(e);
   }
+}
+
+async function uploadImage(image, articleId)
+{
+  try {
+    if (image && articleId)
+    {
+      const info = await Fs.getInfoAsync(image, {size: true});
+      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 800}}), { compress: 1 });
+      const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
+
+      let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
+
+      const options = {
+        method: 'post',
+        headers: { 'Content-Type': "application/json" },
+        body: JSON.stringify({ data: data, articleId: articleId })
+      }
+
+      const json = await fetchApi(url + "article/image/create", options);
+
+      return json;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
+
+const fetchApi = async (url, options) => {
+  let res = await fetch(url, options);
+
+  let json = await res.text();
+  if (json.charAt(0) !== '<') json = JSON.parse(json);
+  else
+  {
+    return { error: json };
+  }
+  return json;
 }
 
 const login = async (username = null, password = null) => {
