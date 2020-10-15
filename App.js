@@ -10,6 +10,10 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Fs from 'expo-file-system';
 import * as ImageManipulator from "expo-image-manipulator";
 
+import Api from './API/api';
+
+console.log(Api.getAvisFor(1).then(res => console.log(res).catch(e => console.log(e))));
+
 // import { Dimensions } from 'Dimensions';
 
 function HomeScreen({ navigation, route }) {
@@ -190,14 +194,9 @@ function HomeScreen({ navigation, route }) {
           <TextInput style={styles.textinput}  placeholder="Password" onChangeText={ setPassword } />
           <Button title="Connect"
           onPress={() => {
-            let log;
-            console.log(username + " " + password);
-            if (username && password) log = login(username, password);
-            else log = login();
-
-            log.then(res => {
-              if (res === true) setSession(true);
-              else console.log(res);
+            Api.login(username, password).then(res => {
+              if (res.error) console.log(res);
+              else setSession(true);
             })
             .catch(e => console.log(e));
           }
@@ -209,11 +208,10 @@ function HomeScreen({ navigation, route }) {
           <TextInput style={styles.textinput}  placeholder="Confirm password" onChangeText={ setConfirmPassword } />
           <Button title="Signup"
           onPress={() => {
-            let log;
-            console.log(username + " " + password);
-            register(username, email, password, confirmPassword).then(res => {
-              if (res === true) console.log('register succesfull');
-              else console.log(res);
+            Api.register(username, email, password, confirmPassword)
+            .then(res => {
+              if (res.error) console.log(res);
+              else console.log("Register succesfull!");;
             })
             .catch(e => console.log(e));
           }
@@ -283,37 +281,7 @@ const fetchApi = async (url, options) => {
   return json;
 }
 
-const login = async (username = null, password = null) => {
-  const creds = {};
 
-  if (!username || !password)
-  {
-    creds.username = 'tuncay';
-    creds.password = '14531453';
-  }
-  else
-  {
-    creds.username = username;
-    creds.password = password;
-  }
-
-  const options = {
-    method: 'post',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(creds)
-  }
-
-  const json = await fetchApi('http://localeo.herokuapp.com/API/user/login', options);
-
-  if (json.error)
-  {
-    return json.error;
-  }
-  else
-  {
-    return true;
-  }
-}
 
 const register = async (username, email, password, confirmPassword) => {
   const user = {
