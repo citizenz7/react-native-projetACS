@@ -12,7 +12,29 @@ import * as ImageManipulator from "expo-image-manipulator";
 
 import Api from './API/api';
 
-console.log(Api.getAvisFor(1).then(res => console.log(res).catch(e => console.log(e))));
+async function test()
+{
+  try {
+    let res;
+
+    res = await Api.login('tuncay', '12345678');
+    console.log(res);
+
+    res = await Api.createAvis({ destinaterId: 2, title: "Test", message: "Salut olivier", stars: 6 });
+    console.log(res);
+
+    res = await Api.getAvisFrom(1);
+    console.log(res);
+
+    res = await Api.createMessage({ text: "Salut olivier!", destinaterId: 2 });
+    console.log(res);
+
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+test();
 
 // import { Dimensions } from 'Dimensions';
 
@@ -66,7 +88,7 @@ function HomeScreen({ navigation, route }) {
 
   async function handlePostArticle()
   {
-    try {
+    try {let test = await Api.createAvis(); console.log(test);
       setIsPostArticle(true);
 
       const newArticle = { title: title, description: description, price: price };
@@ -194,7 +216,8 @@ function HomeScreen({ navigation, route }) {
           <TextInput style={styles.textinput}  placeholder="Password" onChangeText={ setPassword } />
           <Button title="Connect"
           onPress={() => {
-            Api.login(username, password).then(res => {
+            Api.login(username, password)
+            .then(res => {
               if (res.error) console.log(res);
               else setSession(true);
             })
