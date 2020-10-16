@@ -88,26 +88,26 @@ function HomeScreen({ navigation, route }) {
 
   async function handlePostArticle()
   {
-    try {let test = await Api.createAvis(); console.log(test);
+    try {
       setIsPostArticle(true);
 
       const newArticle = { title: title, description: description, price: price };
 
-      const res = await createArticle(newArticle);
+      const article = await createArticle(newArticle);
 
-      if (res.error)
+      if (article.error)
       {
-        console.log(res.error);
+        console.log(article.error);
         return
       }
 
-      if (!res.article)
+      if (!article.article)
       {
         console.log("No article in return");
         return;
       }
 
-      if (!res.article.id)
+      if (!article.article.id)
       {
         console.log("No article id!");
         return;
@@ -123,8 +123,17 @@ function HomeScreen({ navigation, route }) {
       {
         if (image)
         {
+          const info = await Fs.getInfoAsync(image, {size: true});
+          const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 800}}), { compress: 1 });
+          const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
+
+          let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
+
           let index = i;
-          uploadImage(image, res.article.id)
+          Api.createImage({
+            data: data,
+            articleId: article.article.id
+          })
           .then((res) => {
             if (res.error)
             {
@@ -270,11 +279,7 @@ async function uploadImage(image, articleId)
   try {
     if (image && articleId)
     {
-      const info = await Fs.getInfoAsync(image, {size: true});
-      const resizedImage = await ImageManipulator.manipulateAsync(image, new Array({resize: {width: 800}}), { compress: 1 });
-      const newInfo = await Fs.getInfoAsync(resizedImage.uri, {size: true});console.log(info.size + "=>" + newInfo.size);
 
-      let data = await Fs.readAsStringAsync(resizedImage.uri, { encoding: Fs.EncodingType.Base64 });
 
       const options = {
         method: 'post',
